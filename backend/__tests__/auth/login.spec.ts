@@ -1,4 +1,4 @@
-import { AuthService } from "../../src/services/AuthService";
+import { AuthService } from "../../src/modules/users/services/AuthService";
 
 describe("AuthService - Login", () => {
   it("deve lançar erro se o usuário não existir", async () => {

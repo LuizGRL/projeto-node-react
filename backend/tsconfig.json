@@ -38,6 +38,8 @@
     "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
+    "experimentalDecorators": true,     
+    "emitDecoratorMetadata": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "moduleResolution": "node",

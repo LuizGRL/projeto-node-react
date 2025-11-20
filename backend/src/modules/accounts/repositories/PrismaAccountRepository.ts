@@ -1,14 +1,30 @@
 import { prisma } from "../../../../prisma/index";
 import type { ICreateAccountDTO } from "../dtos/ICreateAccountDTO";
-import type { IUser } from "../entities/interfaces/IUser";
 import type { Account } from "../entities/classes/Account";
-
-
+import { Role } from "@prisma/client";
+import type { IUser } from "../entities/interfaces/IUser";
 
 export class PrismaAccountRepository {
+
     async create(data: ICreateAccountDTO): Promise<Account> {
-        // O Prisma retorna o objeto criado, convertemos para User se necessário
-        const account = await prisma.account.create({ data });
+            
+        const account = await prisma.account.create({
+            data: {
+                ...data,
+                role: data.role as unknown as Role 
+            }
+        });
+
         return account as Account; 
     }
+
+    async findByEmail(email: string): Promise<IUser | null> {
+        const account = await prisma.account.findUnique({
+            where: {
+                email: email
+            }
+        });    
+        return account as IUser | null;
+    }
 };
+

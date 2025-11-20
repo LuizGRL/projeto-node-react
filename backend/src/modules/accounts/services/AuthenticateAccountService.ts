@@ -23,7 +23,7 @@ export class AuthenticateAccountService {
             throw new AppError("Email ou senha incorretos", 401);
         }
 
-        const passwordMatch = await compare(request.email, user.password);
+        const passwordMatch = await compare(request.password, user.password);
 
         if (!passwordMatch) {
             throw new AppError("Email ou senha incorretos", 401);

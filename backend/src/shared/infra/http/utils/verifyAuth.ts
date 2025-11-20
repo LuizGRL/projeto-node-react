@@ -10,12 +10,12 @@ interface IPayload {
 
 export function verifyAuth(req: IncomingMessage) {
   const authHeader = req.headers.authorization;
+  console.log(authHeader)
 
   if (!authHeader) {
     throw new AppError("Token missing", 401);
   }
 
-  // Formato: "Bearer eyJhbGci..."
   const [, token] = authHeader.split(" ");
 
   try {

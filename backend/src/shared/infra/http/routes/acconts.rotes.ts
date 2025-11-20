@@ -4,6 +4,9 @@ import type { IAccountRepository } from "modules/accounts/repositories/IAccountR
 import { PrismaAccountRepository } from "modules/accounts/repositories/PrismaAccountRepository";
 import { AuthenticateAccountService } from "modules/accounts/services/AuthenticateAccountService";
 import { adaptRoute } from "../adapters/NodeRouteAdapter";
+import { verifyAuth } from "../utils/verifyAuth";
+import { checkRole } from "../utils/checkRole";
+import { ERole } from "modules/accounts/entities/enums/ERole";
 
 
 const accountRepository = new PrismaAccountRepository() as IAccountRepository;

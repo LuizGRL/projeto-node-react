@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "accounts" ALTER COLUMN "cpf" SET DATA TYPE VARCHAR(14);

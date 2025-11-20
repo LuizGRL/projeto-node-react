@@ -1,10 +1,10 @@
-import type { ILoginDTO } from "../dtos/ILoginDTO";
 import { compare } from "bcryptjs";
 import { injectable, inject } from "tsyringe";
 import jwt from "jsonwebtoken";
 import { AppError } from "shared/errors/AppError";
 import type { IAccountRepository } from "../repositories/IAccountRepository";
 import auth from "../../../config/auth";
+import type { ILoginRequestDTO } from "../dtos/ILoginDTO";
 
 const { sign } = jwt;
 
@@ -15,7 +15,7 @@ export class AuthenticateAccountService {
         private accountRepository: IAccountRepository
     ) {}
 
-    async execute(request: ILoginDTO) {
+    async execute(request: ILoginRequestDTO) { 
 
         const user = await this.accountRepository.findByEmail(request.email);
 

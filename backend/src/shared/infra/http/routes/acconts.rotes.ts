@@ -13,11 +13,10 @@ const authController = new AuthenticateAccountController(authUseCase);
 
 export async function accountsRoutes(req: IncomingMessage, res: ServerResponse) {
   const { url, method } = req;
+  const mainRoute = '/accounts'
 
-    if (url === "/accounts/aa" && method === "POST") {
-    
-    res.writeHead(200, { "Content-Type": "application/json" });
-    return res.end(JSON.stringify({ message: "Olá Mundo" }));
+  if (url === mainRoute + "/login" && method === "POST") {
+    return adaptRoute(authController.handle.bind(authController))(req,res);
   }
 
 }

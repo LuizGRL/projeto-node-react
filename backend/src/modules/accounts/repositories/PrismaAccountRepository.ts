@@ -3,8 +3,11 @@ import type { ICreateAccountDTO } from "../dtos/ICreateAccountDTO";
 import type { Account } from "../entities/classes/Account";
 import { Role } from "@prisma/client";
 import type { IUser } from "../entities/interfaces/IUser";
+import { injectable } from "tsyringe";
+import type { IAccountRepository } from "./IAccountRepository";
 
-export class PrismaAccountRepository {
+@injectable()
+export class PrismaAccountRepository implements IAccountRepository {
 
     async create(data: ICreateAccountDTO): Promise<Account> {
             
@@ -19,6 +22,9 @@ export class PrismaAccountRepository {
     }
 
     async findByEmail(email: string): Promise<IUser | null> {
+          if (!email) {
+            return null;
+        }
         const account = await prisma.account.findUnique({
             where: {
                 email: email

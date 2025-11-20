@@ -2,12 +2,9 @@ import { IncomingMessage, ServerResponse } from "http";
 import type { IHttpRequest } from "../models/IHttpRequest";
 import { parseBody } from "../utils/parseBody";
 
+type ControllerMethod = (httpRequest: IHttpRequest) => Promise<any>;
 
-interface IController {
-  handle(httpRequest: IHttpRequest): Promise<any>;
-}
-
-export const adaptRoute = (controller: IController) => {
+export const adaptRoute = (controller: ControllerMethod) => {
   return async (req: IncomingMessage, res: ServerResponse) => {
     const body = await parseBody(req);
 
@@ -18,7 +15,7 @@ export const adaptRoute = (controller: IController) => {
       user: (req as any).user, 
     };
 
-    const httpResponse = await controller.handle(httpRequest);
+    const httpResponse = await controller(httpRequest);
 
     res.writeHead(httpResponse.statusCode, {
       "Content-Type": "application/json",

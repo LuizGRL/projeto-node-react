@@ -1,9 +1,6 @@
 import z from "zod";
-import { ERole } from "../entities/enums/ERole";
-import { isValidCPF } from "shared/infra/utils/valdiateCPF";
 
-
-export const IUpdatePasswordSchema = z.object({
+export const UpdatePasswordSchema = z.object({
     id: z.uuid(),
     password: z.string()
     .min(8, "A senha precisa ter no mínimo 8 caracteres")
@@ -12,4 +9,4 @@ export const IUpdatePasswordSchema = z.object({
     .regex(/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/, "A senha deve ter 1 caractere especial"),  
 })
 
-export type IUpdatePasswordDTO = z.infer<typeof IUpdatePasswordSchema>;
+export type IUpdatePasswordDTO = z.infer<typeof UpdatePasswordSchema>;

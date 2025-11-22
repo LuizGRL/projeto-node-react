@@ -3,7 +3,7 @@ import { ERole } from "../entities/enums/ERole";
 import { isValidCPF } from "shared/infra/utils/valdiateCPF";
 
 
-export const ICreateAccountSchema = z.object({
+export const CreateAccountSchema = z.object({
     firstName: z.string().min(1).max(255),
     lastName: z.string().min(1).max(255),
     email: z.string().email(),
@@ -19,4 +19,4 @@ export const ICreateAccountSchema = z.object({
     role: z.nativeEnum(ERole)
 })
 
-export type ICreateAccountDTO = z.infer<typeof ICreateAccountSchema>;
+export type ICreateAccountDTO = z.infer<typeof CreateAccountSchema>;

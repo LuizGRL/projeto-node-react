@@ -10,13 +10,14 @@ import { isValidPassword } from "shared/infra/utils/validatePassword";
 import { IUpdateAccountDTO } from "../dtos/IUpdateAccountDTO";
 import { IUpdatePasswordDTO } from "../dtos/IUpdatePasswordDTO";
 import { UUID } from "crypto";
+import { inject, injectable } from "tsyringe";
+import type { IAccountRepository } from "../repositories/IAccountRepository";
 
+@injectable()
 export class AccountService {
 
-    accountRepository: PrismaAccountRepository;
-    constructor(userRepository: PrismaAccountRepository ) {
-        this.accountRepository = userRepository;
-    }
+    constructor(
+        @inject("AccountRepository") private accountRepository: IAccountRepository) { }
 
     async createUser(data: ICreateAccountDTO): Promise<Account | null> {
         const result = this.accountEmailAndCPFIsValid(data as IUser);

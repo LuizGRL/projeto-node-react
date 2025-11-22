@@ -12,5 +12,4 @@ export interface IUser {
     role: ERole;
     createdAt: Date;
     updatedAt: Date;
-    getAge(): Date;
 }

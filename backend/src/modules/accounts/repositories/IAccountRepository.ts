@@ -1,10 +1,8 @@
-import { Account } from "@prisma/client";
 import type { ICreateAccountDTO } from "../dtos/ICreateAccountDTO";
-import type { IUser } from "../entities/interfaces/IUser";
 import { IUpdateAccountDTO } from "../dtos/IUpdateAccountDTO";
 import { UUID } from "crypto";
 import { IUpdatePasswordDTO } from "../dtos/IUpdatePasswordDTO";
-import { AppError } from "shared/errors/AppError";
+import { Account } from "../entities/classes/Account";
 
 export interface IAccountRepository {
     create(data: ICreateAccountDTO): Promise<Account>;

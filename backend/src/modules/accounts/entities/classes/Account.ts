@@ -26,8 +26,4 @@ export class Account implements IUser {
         this.createdAt = props.createdAt;
         this.updatedAt = props.updatedAt;
     }
-
-    getAge(): Date {
-        return this.birthDate;
-    }
 }

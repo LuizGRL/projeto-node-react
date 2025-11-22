@@ -1,7 +1,7 @@
 import { prisma } from "../../../../prisma/index";
 import type { ICreateAccountDTO } from "../dtos/ICreateAccountDTO";
 import type { Account } from "../entities/classes/Account";
-import { Prisma, Role } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import type { IUser } from "../entities/interfaces/IUser";
 import { injectable } from "tsyringe";
 import type { IAccountRepository } from "./IAccountRepository";

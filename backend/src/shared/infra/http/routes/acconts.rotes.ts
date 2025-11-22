@@ -1,18 +1,14 @@
 import type { IncomingMessage, ServerResponse } from "http";
 import { AuthenticateAccountController } from "modules/accounts/controllers/AuthenticateAccountController";
-import type { IAccountRepository } from "modules/accounts/repositories/IAccountRepository";
-import { PrismaAccountRepository } from "modules/accounts/repositories/PrismaAccountRepository";
-import { AuthenticateAccountService } from "modules/accounts/services/AuthenticateAccountService";
 import { adaptRoute } from "../adapters/NodeRouteAdapter";
-import { verifyAuth } from "../utils/verifyAuth";
-import { checkRole } from "../utils/checkRole";
-import { ERole } from "modules/accounts/entities/enums/ERole";
+import { container } from "tsyringe";
+import { AccountController } from "modules/accounts/controllers/AccountController";
+import "shared/container";
 
 
-const accountRepository = new PrismaAccountRepository() as IAccountRepository;
-const authUseCase = new AuthenticateAccountService(accountRepository);
-const authController = new AuthenticateAccountController(authUseCase);
 
+const authController = container.resolve(AuthenticateAccountController);
+const accountController = container.resolve(AccountController);
 
 export async function accountsRoutes(req: IncomingMessage, res: ServerResponse) {
   const { url, method } = req;
@@ -20,6 +16,18 @@ export async function accountsRoutes(req: IncomingMessage, res: ServerResponse) 
 
   if (url === mainRoute + "/login" && method === "POST") {
     return adaptRoute(authController.handle.bind(authController))(req,res);
+  }
+
+  if (url === mainRoute + "/create" && method === "POST") {
+    return adaptRoute(accountController.create.bind(accountController))(req,res);
+  }
+
+  if (url === mainRoute + "/update" && method === "POST") {
+    return adaptRoute(accountController.update.bind(accountController))(req,res);
+  }
+1
+  if (url === mainRoute + "/updatePassword" && method === "POST") {
+    return adaptRoute(accountController.updatePassword.bind(accountController))(req,res);
   }
 
 }

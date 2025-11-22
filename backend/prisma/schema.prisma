@@ -21,7 +21,7 @@ model Account {
   id         String   @id @default(uuid())
   firstName  String   @map("first_name")
   lastName   String   @map("last_name")
-  email      String   @unique 
+  email      String   @unique
   password   String
   cpf        String   @unique @db.VarChar(14)
   birthDate  DateTime @map("birth_date")

@@ -10,6 +10,7 @@ export default {
   extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
+    "^shared/(.*)$": "<rootDir>/src/shared/$1",
   },
-  setupFiles: ["<rootDir>/jest.setup.ts"], // caminho relativo ao rootDir
+  setupFiles: ["<rootDir>/jest.setup.ts"], 
 };

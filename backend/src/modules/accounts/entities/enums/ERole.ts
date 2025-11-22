@@ -1,6 +1,6 @@
 export enum ERole {
     ADMIN = "ADMIN",
-    USER = "USER",
-    LIBRARIAN = "LIBRARIAN",
+    WORKER = "WORKER",
+    CUSTOMER = "CUSTOMER",
     VISITOR = "VISITOR"
 }

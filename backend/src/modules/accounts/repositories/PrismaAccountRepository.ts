@@ -8,6 +8,7 @@ import type { IAccountRepository } from "./IAccountRepository";
 import { AppError } from "shared/errors/AppError";
 import { UUID } from "crypto";
 import { IUpdateAccountDTO } from "../dtos/IUpdateAccountDTO";
+import { IUpdatePasswordDTO } from "../dtos/IUpdatePasswordDTO";
 
 @injectable()
 export class PrismaAccountRepository implements IAccountRepository {
@@ -51,6 +52,25 @@ export class PrismaAccountRepository implements IAccountRepository {
             throw new AppError("Erro ao atualizar o usuário" + err, 500);
         }
     }
+
+    async updatePassowrd(data: IUpdatePasswordDTO): Promise<Account> {
+        const { id, ...dataWithoutId } = data;
+        try {
+            const account =  await prisma.account.update({
+                where: { id },
+                data: { ...dataWithoutId }
+            });
+
+            return account as Account;
+
+        } catch (err: any) {
+            if (err instanceof Prisma.PrismaClientKnownRequestError) {
+                throw new AppError("Erro ao atualizar o usuário: " + err, 500);
+            }
+            throw new AppError("Erro ao atualizar o usuário" + err, 500);
+        }
+    }
+
 
     async findByEmail(email: string): Promise<Account | null> {
         if (!email) {

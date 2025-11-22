@@ -8,6 +8,7 @@ import { AppError } from "shared/errors/AppError";
 import { isValidCPF } from "shared/infra/utils/valdiateCPF";
 import { isValidPassword } from "shared/infra/utils/validatePassword";
 import { IUpdateAccountDTO } from "../dtos/IUpdateAccountDTO";
+import { IUpdatePasswordDTO } from "../dtos/IUpdatePasswordDTO";
 
 export class AccountService {
 
@@ -53,10 +54,21 @@ export class AccountService {
         return this.accountRepository.update(data);
     }
 
-    // async updatePassword(user: IUser): Promise<Account> {
-    //     data.password = await hash(data.password, 8);
-    //     return this.accountRepository.create(data);
-    // }
+    async updatePassword(data: IUpdatePasswordDTO): Promise<Account | null> {
+
+        const findAccountresult = await this.findAccount(data as IUser);
+
+        if (findAccountresult instanceof AppError) {
+            throw findAccountresult;
+        }
+
+        if (!isValidPassword(data.password)) { 
+            throw new AppError("Senha em formato inválido", 400);
+        }       
+
+        data.password = await hash(data.password, 8);
+        return this.accountRepository.updatePassowrd(data);
+    }
     
     // async deleteUser(user: IUser): Promise<boolean> {
     //     data.password = await hash(data.password, 8);
@@ -90,10 +102,6 @@ export class AccountService {
 
         if (data.id) {
             account = await this.accountRepository.findById(data.id);
-        }
-
-        if (!account && data.email) {
-            account = await this.accountRepository.findByEmail(data.email);
         }
 
         if (!account) {

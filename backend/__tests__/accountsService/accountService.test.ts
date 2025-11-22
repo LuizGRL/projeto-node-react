@@ -3,10 +3,10 @@ import type { ICreateAccountDTO } from "../../src/modules/accounts/dtos/ICreateA
 import { ERole } from "../../src/modules/accounts/entities/enums/ERole";
 import { AccountService } from "../../src/modules/accounts/services/AccountService";
 import { prisma } from "../../prisma";
-import { AppError } from "shared/errors/AppError";
-import { Account } from  "../../src/modules/accounts/entities/classes/Account";
 import { randomUUID, UUID } from "crypto";
 import { IUpdateAccountDTO } from "modules/accounts/dtos/IUpdateAccountDTO";
+import { IUpdatePasswordDTO } from "modules/accounts/dtos/IUpdatePasswordDTO";
+import { compare } from "bcryptjs";
 
 beforeEach(async () => {
   await prisma.account.deleteMany();
@@ -28,9 +28,6 @@ describe("UserService - Cadastro", () => {
     role: ERole.VISITOR,
   });
 
-  // -------------------------------------------------------
-  // HAPPY PATH
-  // -------------------------------------------------------
   test("deve criar um usuário com sucesso", async () => {
     const accountRepository = new PrismaAccountRepository();
     const accountService = new AccountService(accountRepository);
@@ -44,9 +41,7 @@ describe("UserService - Cadastro", () => {
     expect(account.lastName).toBe(data.lastName);
     expect(account.role).toBe(data.role);
     expect(account.cpf).toBe(data.cpf);
-
-    expect(account.password).toMatch(/^\$2[aby]\$.+/); // bcrypt hash
-
+    expect(account.password).toMatch(/^\$2[aby]\$.+/); 
     expect(account).toHaveProperty("birthDate");
 
     const count = await prisma.account.count();
@@ -77,9 +72,6 @@ describe("UserService - Cadastro", () => {
     });
   });
 
-  // -------------------------------------------------------
-  // CPF INVÁLIDO
-  // -------------------------------------------------------
   describe("Validação de CPF", () => {
     const invalidCpfs = [
       "9999999999",
@@ -103,9 +95,6 @@ describe("UserService - Cadastro", () => {
     });
   });
 
-  // -------------------------------------------------------
-  // DUPLICIDADE
-  // -------------------------------------------------------
   test("não deve criar um usuário com campos duplicados", async () => {
     const accountRepository = new PrismaAccountRepository();
     const accountService = new AccountService(accountRepository);
@@ -166,6 +155,34 @@ describe("UserService - Update", () => {
 
     const data = makeValidUser();
     const newData = makeUpdateValidUser(id);
+
+    const account = await accountService.updateUser(newData);
+
+    expect(account).not.toBe(null);
+    expect(account?.id).toBe(id);
+    expect(account!.email).toBe(newData.email);
+    expect(account!.firstName).toBe(newData.firstName);
+    expect(account!.lastName).toBe(newData.lastName);
+    expect(account!.role).toBe(newData.role);
+    expect(account!.cpf).toBe(newData.cpf);
+    expect(account!.role).toBe(newData.role);
+
+    expect(account!.email).not.toBe(data.email);
+    expect(account!.firstName).not.toBe(data.firstName);
+    expect(account!.lastName).not.toBe(data.lastName);
+    expect(account!.role).not.toBe(data.role);
+    expect(account!.cpf).not.toBe(data.cpf);
+    expect(account!.role).not.toBe(data.role);
+
+    const count = await prisma.account.count();
+    expect(count).toBe(1);
+  });
+
+
+  test("deve atualizar um usuário com sucesso apenas com id existente", async () => {
+    const data = makeValidUser();
+    const newData = makeUpdateValidUser(id);
+    newData.email = "naoexiste@gmail.com"
 
     const account = await accountService.updateUser(newData);
 
@@ -251,10 +268,90 @@ describe("UserService - Update", () => {
 
 });
 
+describe("UserService - PasswordUpdate", () => {
+  let accountRepository: PrismaAccountRepository;
+  let accountService: AccountService;
+  let id: UUID;
+
+  const makeValidUser = (): ICreateAccountDTO => ({
+    firstName: "Luiz Guilherme",
+    lastName: "Rodrigues Lins",
+    email: "luizguilherme.lgrl@gmail.com",
+    password: "Teste123@",
+    cpf: "918.390.300-38",
+    birthDate: new Date(),
+    role: ERole.VISITOR,
+  });
+
+  const makeUpdateValidPassword = (id: UUID): IUpdatePasswordDTO => ({
+    id: id,
+    email: "luizguilherme.lgrl@gmail.com",
+    password: "Teste@999",
+  });
 
 
-// Não deve atualizar o password de um usuario nao existente
-// Nao deve ataluzar o passqord de um usuario que caso o password n corresponda ao apdrao definido
+  beforeEach(async () => {
+    await prisma.account.deleteMany();
+    accountRepository = new PrismaAccountRepository();
+    accountService = new AccountService(accountRepository);
+    const data = makeValidUser();
+    const account = await accountService.createUser(data);
+
+    if (account) {
+      id = account.id;
+    }
+  });
+
+  test("deve atualizar a senha de um usuário com sucesso", async () => {
+    const newData = makeUpdateValidPassword(id);
+    const oldPassword = newData.password;
+
+    const oldAccount = await prisma.account.findUnique({ where: { id } });
+    const account = await accountService.updatePassword(newData);
+
+    expect(account).not.toBe(null);
+
+    expect(account?.id).toBe(id);
+    expect(account!.email).toBe(newData.email);
+
+    const passwordIsValidHash = await compare(oldPassword, account!.password);
+  
+    expect(passwordIsValidHash).toBe(true);
+
+    expect(oldAccount?.email).toBe(account?.email);
+    expect(oldAccount?.id).toBe(account?.id);
+    expect(account!.password).not.toBe(oldAccount!.password);
+
+    const count = await prisma.account.count();
+    expect(count).toBe(1);
+  });
+
+  test("não deve atualizar a senha de um usuário que não corresponda ao padrão", async () => {
+    const newData = makeUpdateValidPassword(id);
+    const oldAccount = await prisma.account.findUnique({ where: { id } });
+    newData.password = '1231112222112'
+    await expect(accountService.updatePassword(newData)).rejects.toMatchObject({
+          message: "Senha em formato inválido",
+          statusCode: 400,
+    });
+    const account = await prisma.account.findUnique({ where: { id } });
+    expect(account!.password).toBe(oldAccount!.password);
+  });
+
+  test("não deve atualizar a senha de um usuário que não foi encontrado", async () => {
+    const newData = makeUpdateValidPassword(id);
+    newData.id = randomUUID();
+    const oldAccount = await prisma.account.findUnique({ where: { id } });
+    const lastPassword  = oldAccount?.password;
+    await expect(accountService.updatePassword(newData)).rejects.toMatchObject({
+          message: "Conta não econtrada",
+          statusCode: 400,
+    });
+    expect(lastPassword).toBe(oldAccount!.password);
+  });
+});
+
+
 
 
 

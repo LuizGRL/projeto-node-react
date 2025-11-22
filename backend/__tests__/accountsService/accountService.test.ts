@@ -7,6 +7,7 @@ import { randomUUID, UUID } from "crypto";
 import { IUpdateAccountDTO } from "modules/accounts/dtos/IUpdateAccountDTO";
 import { IUpdatePasswordDTO } from "modules/accounts/dtos/IUpdatePasswordDTO";
 import { compare } from "bcryptjs";
+import { IUser } from "modules/accounts/entities/interfaces/IUser";
 
 beforeEach(async () => {
   await prisma.account.deleteMany();
@@ -285,7 +286,6 @@ describe("UserService - PasswordUpdate", () => {
 
   const makeUpdateValidPassword = (id: UUID): IUpdatePasswordDTO => ({
     id: id,
-    email: "luizguilherme.lgrl@gmail.com",
     password: "Teste@999",
   });
 
@@ -312,7 +312,6 @@ describe("UserService - PasswordUpdate", () => {
     expect(account).not.toBe(null);
 
     expect(account?.id).toBe(id);
-    expect(account!.email).toBe(newData.email);
 
     const passwordIsValidHash = await compare(oldPassword, account!.password);
   
@@ -351,13 +350,160 @@ describe("UserService - PasswordUpdate", () => {
   });
 });
 
+describe("UserService - Delete", () => {
+  let accountRepository: PrismaAccountRepository;
+  let accountService: AccountService;
+  let id: UUID;
+  const makeValidUser = (): ICreateAccountDTO => ({
+    firstName: "Luiz Guilherme",
+    lastName: "Rodrigues Lins",
+    email: "luizguilherme.lgrl@gmail.com",
+    password: "Teste123@",
+    cpf: "918.390.300-38",
+    birthDate: new Date(),
+    role: ERole.VISITOR,
+  });
 
 
+  beforeEach(async () => {
+    accountRepository = new PrismaAccountRepository();
+    accountService = new AccountService(accountRepository);
+    const account = await accountService.createUser(makeValidUser());
+    if(account?.id) {
+      id = account.id;
+      
+    }
+  });
+
+  test("deve deletar um usuário com sucesso", async () => {
+
+    const account = await prisma.account.findUnique({ where: { id } });
+    expect(account).not.toBe(null);
+    const result = await accountService.deleteUser(account as IUser);
+    expect(result).toBe(true);
+  });
+
+  test("não deve deletar um usuário que não foi encotrado", async () => {
+    const account = await prisma.account.findUnique({ where: { id } });
+    expect(account).not.toBe(null);
+    const fakeId = randomUUID();
+    account!.id = fakeId;    
+    await expect(accountService.deleteUser(account as IUser)).rejects.toMatchObject({
+          message: "Conta não econtrada",
+          statusCode: 400,
+    });
+  });
+});
+
+describe("UserService - Achar Usuário", () => {
+  let accountRepository: PrismaAccountRepository;
+  let accountService: AccountService;
+  let firstUserId: UUID;
+  let otherUserId: UUID;
+  let firstUserEmail: string;
+  let otherUserEmail: string;
 
 
-// Deve deletar um usuário existente
-// Não deve deletar um usuario que não existe
+  const makeValidUser = (): ICreateAccountDTO => ({
+    firstName: "Luiz Guilherme",
+    lastName: "Rodrigues Lins",
+    email: "luizguilherme.lgrl@gmail.com",
+    password: "Teste123@",
+    cpf: "918.390.300-38",
+    birthDate: new Date(),
+    role: ERole.VISITOR,
+  });
 
-// Deve reotrnar um usuasrio existente buscando pelo id
-// não deve retornar um usuario existente buscando pelo email
+  const anotherUser = (): ICreateAccountDTO => ({
+    firstName: "Carlos",
+    lastName: "Ferreira",
+    email: "carlos@gmai.com",
+    password: "Teste123@",
+    cpf: "715.974.500-06",
+    birthDate: new Date(),
+    role: ERole.ADMIN,
+  });
+
+
+  beforeEach(async () => {
+    accountRepository = new PrismaAccountRepository();
+    accountService = new AccountService(accountRepository);
+    const account = await accountService.createUser(makeValidUser());
+    if(account?.id) {
+      firstUserId = account.id;
+      firstUserEmail = account.email;
+
+    }
+
+    const otherAccount = await accountService.createUser(anotherUser());
+    if(otherAccount?.id) {
+      otherUserId = otherAccount.id;
+      otherUserEmail = otherAccount.email;
+
+    }
+
+  });
+
+  test("deve achar um usuário pelo email com sucesso", async () => {
+    const account1 = await accountService.getUserByEmail(firstUserEmail);
+    const account2 = await accountService.getUserByEmail(otherUserEmail);
+
+    expect(account1).not.toBe(null);
+    expect(account2).not.toBe(null);
+  
+    expect(account1?.firstName).not.toBe(account2?.firstName);
+    expect(account1?.email).not.toBe(account2?.email);
+    expect(account1?.cpf).not.toBe(account2?.cpf);
+    expect(account1?.lastName).not.toBe(account2?.lastName);
+    expect(account1?.password).not.toBe(account2?.password);
+    expect(account1?.role).not.toBe(account2?.role);
+  });
+
+
+  test("não deve achar um usuário pelo email", async () => {
+    const fakeEmail = "naoexisto@gmail.com";
+    const account1 = await accountService.getUserByEmail(fakeEmail);
+    expect(account1).toBe(null);
+  });
+
+
+  const invalidEmails = [
+    "luizguilhermegmail.com",
+    "asdasdasdasd",
+    "teste@",
+    "@gmail.com",
+    "dsadsa@dsadsa",
+  ];
+
+  invalidEmails.forEach((email) => {
+    test(`não deve atualizar usuário com email inválido: ${email}`, async () => {
+        await expect(accountService.getUserByEmail(email)).rejects.toMatchObject({
+          message: "Email inválido",
+          statusCode: 400,});
+    });
+  });
+
+  test("deve achar um usuário pelo id com sucesso", async () => {
+    const account1 = await accountService.getUserById(firstUserId);
+    const account2 = await accountService.getUserById(otherUserId);
+
+    expect(account1).not.toBe(null);
+    expect(account2).not.toBe(null);
+  
+    expect(account1?.firstName).not.toBe(account2?.firstName);
+    expect(account1?.email).not.toBe(account2?.email);
+    expect(account1?.cpf).not.toBe(account2?.cpf);
+    expect(account1?.lastName).not.toBe(account2?.lastName);
+    expect(account1?.password).not.toBe(account2?.password);
+    expect(account1?.role).not.toBe(account2?.role);
+
+  });
+
+  test("não deve achar um usuário pelo id", async () => {
+    const fakeId = randomUUID();
+    const account1 = await accountService.getUserById(fakeId);
+    expect(account1).toBe(null);
+  });
+
+});
 

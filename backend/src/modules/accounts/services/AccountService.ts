@@ -9,6 +9,7 @@ import { isValidCPF } from "shared/infra/utils/valdiateCPF";
 import { isValidPassword } from "shared/infra/utils/validatePassword";
 import { IUpdateAccountDTO } from "../dtos/IUpdateAccountDTO";
 import { IUpdatePasswordDTO } from "../dtos/IUpdatePasswordDTO";
+import { UUID } from "crypto";
 
 export class AccountService {
 
@@ -67,23 +68,31 @@ export class AccountService {
         }       
 
         data.password = await hash(data.password, 8);
-        return this.accountRepository.updatePassowrd(data);
+        return this.accountRepository.updatePassword(data);
     }
     
-    // async deleteUser(user: IUser): Promise<boolean> {
-    //     data.password = await hash(data.password, 8);
-    //     return this.accountRepository.create(data);
-    // }
+    async deleteUser(data: Account): Promise<boolean> {
 
-    // async getUserById(id: string): Promise<Account> {
-    //     data.password = await hash(data.password, 8);
-    //     return this.accountRepository.create(data);
-    // }
+        const findAccountresult = await this.findAccount(data as IUser);
+        if (findAccountresult instanceof AppError) {
+            throw findAccountresult;
+        }
 
-    // async getUserByEmail(email: string): Promise<Account> {
-    //     data.password = await hash(data.password, 8);
-    //     return this.accountRepository.create(data);
-    // }
+        return this.accountRepository.delete(data);
+    }
+
+    async getUserById(id: UUID): Promise<Account | null> {
+        return this.accountRepository.findById(id);
+    }
+
+    async getUserByEmail(email: string): Promise<Account| null> {
+        
+        if (!isValidEmail(email)) { 
+            throw new AppError("Email inválido", 400);
+        }
+
+        return this.accountRepository.findByEmail(email);
+    }
 
     accountEmailAndCPFIsValid(data: IUser): AppError | boolean {
         if (!isValidEmail(data.email)) { 

@@ -53,7 +53,7 @@ export class PrismaAccountRepository implements IAccountRepository {
         }
     }
 
-    async updatePassowrd(data: IUpdatePasswordDTO): Promise<Account> {
+    async updatePassword(data: IUpdatePasswordDTO): Promise<Account> {
         const { id, ...dataWithoutId } = data;
         try {
             const account =  await prisma.account.update({
@@ -71,6 +71,19 @@ export class PrismaAccountRepository implements IAccountRepository {
         }
     }
 
+    async delete(data: Account): Promise<boolean> {
+        const { id, ...dataWithoutId } = data;
+        try {
+            const account =  await prisma.account.delete({
+                where: { id }           
+            });
+
+            return true;
+
+        } catch (err: any) {
+            throw new AppError("Erro ao remover o usuário: " + id  , 500);
+        }
+    }
 
     async findByEmail(email: string): Promise<Account | null> {
         if (!email) {

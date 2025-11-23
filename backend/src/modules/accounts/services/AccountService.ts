@@ -12,24 +12,24 @@ import { IUpdatePasswordDTO } from "../dtos/IUpdatePasswordDTO";
 import { UUID } from "crypto";
 import { inject, injectable } from "tsyringe";
 import type { IAccountRepository } from "../repositories/IAccountRepository";
+import { IAccountService } from "../entities/interfaces/IAccountService";
+import { IAccountResponseDTO } from "../dtos/IAccountResponseDTO";
 
 @injectable()
-export class AccountService {
+export class AccountService implements IAccountService {
 
     constructor(
         @inject("AccountRepository") private accountRepository: IAccountRepository) { }
 
-    async createUser(data: ICreateAccountDTO): Promise<Account | null> {
+    async createUser(data: ICreateAccountDTO): Promise<IAccountResponseDTO | null> {
         const result = this.accountEmailAndCPFIsValid(data as IUser);
 
         if (!isValidPassword(data.password)) { 
             throw new AppError("Senha em formato inválido", 400);
-            return null;
         }    
 
         if (typeof(result) !== 'boolean' ) {
             throw result;
-            return null;
         }
         
         data.password = await hash(data.password, 8);
@@ -38,25 +38,23 @@ export class AccountService {
     }
 
 
-    async updateUser(data: IUpdateAccountDTO): Promise<Account | null> {
+    async updateUser(data: IUpdateAccountDTO): Promise<IAccountResponseDTO | null> {
 
         const result = this.accountEmailAndCPFIsValid(data as IUser);
 
         if (typeof(result) !== 'boolean') {
             throw result;
-            return null;
         }
 
         const findAccountresult = await this.findAccount(data as IUser);
         if (findAccountresult instanceof AppError) {
             throw findAccountresult;
-            return null;
         }
 
         return this.accountRepository.update(data);
     }
 
-    async updatePassword(data: IUpdatePasswordDTO): Promise<Account | null> {
+    async updatePassword(data: IUpdatePasswordDTO): Promise<IAccountResponseDTO | null> {
 
         const findAccountresult = await this.findAccount(data as IUser);
 
@@ -74,6 +72,7 @@ export class AccountService {
     
     async deleteUser(data: Account): Promise<boolean> {
 
+        console.log(112123)
         const findAccountresult = await this.findAccount(data as IUser);
         if (findAccountresult instanceof AppError) {
             throw findAccountresult;
@@ -82,11 +81,11 @@ export class AccountService {
         return this.accountRepository.delete(data);
     }
 
-    async getUserById(id: UUID): Promise<Account | null> {
+    async getUserById(id: UUID): Promise<IAccountResponseDTO | null> {
         return this.accountRepository.findById(id);
     }
 
-    async getUserByEmail(email: string): Promise<Account| null> {
+    async getUserByEmail(email: string): Promise<IAccountResponseDTO| null> {
         
         if (!isValidEmail(email)) { 
             throw new AppError("Email inválido", 400);
@@ -107,7 +106,7 @@ export class AccountService {
         return true;
     }
 
-    async findAccount(data: IUser): Promise<Account | AppError> {
+    async findAccount(data: IUser): Promise<IAccountResponseDTO | AppError> {
         let account = null;
 
         if (data.id) {

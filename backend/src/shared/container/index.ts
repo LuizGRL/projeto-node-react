@@ -5,6 +5,7 @@ import { AuthenticateAccountService } from "modules/accounts/services/Authentica
 import { AccountService } from "modules/accounts/services/AccountService";
 import { AccountController } from "modules/accounts/controllers/AccountController";
 import { AuthenticateAccountController } from "modules/accounts/controllers/AuthenticateAccountController";
+import { IAccountService } from "modules/accounts/entities/interfaces/IAccountService";
 
 container.registerSingleton<IAccountRepository>(
   "AccountRepository",
@@ -22,7 +23,7 @@ container.registerSingleton(
 );
 
 
-container.registerSingleton(
+container.registerSingleton<IAccountService>(
   "AccountService",
   AccountService
 );

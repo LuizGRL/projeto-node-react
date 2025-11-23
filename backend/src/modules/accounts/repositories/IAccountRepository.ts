@@ -3,13 +3,14 @@ import { IUpdateAccountDTO } from "../dtos/IUpdateAccountDTO";
 import { UUID } from "crypto";
 import { IUpdatePasswordDTO } from "../dtos/IUpdatePasswordDTO";
 import { Account } from "../entities/classes/Account";
+import { IAccountResponseDTO } from "../dtos/IAccountResponseDTO";
 
 export interface IAccountRepository {
-    create(data: ICreateAccountDTO): Promise<Account>;
-    update(data: IUpdateAccountDTO): Promise<Account>;
-    updatePassword(data: IUpdatePasswordDTO) : Promise<Account>;
+    create(data: ICreateAccountDTO): Promise<IAccountResponseDTO>;
+    update(data: IUpdateAccountDTO): Promise<IAccountResponseDTO>;
+    updatePassword(data: IUpdatePasswordDTO) : Promise<IAccountResponseDTO>;
     delete(data: Account) : Promise<boolean>;
-    findByEmail(email: string): Promise<Account | null>;
-    findById(id: UUID): Promise<Account | null>;
+    findByEmail(email: string): Promise<IAccountResponseDTO | null>;
+    findById(id: UUID): Promise<IAccountResponseDTO | null>;
 
 }

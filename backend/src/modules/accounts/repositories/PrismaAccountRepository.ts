@@ -9,18 +9,20 @@ import { AppError } from "shared/errors/AppError";
 import { UUID } from "crypto";
 import { IUpdateAccountDTO } from "../dtos/IUpdateAccountDTO";
 import { IUpdatePasswordDTO } from "../dtos/IUpdatePasswordDTO";
+import { AccountResponseDTO, IAccountResponseDTO } from "../dtos/IAccountResponseDTO";
 
 @injectable()
 export class PrismaAccountRepository implements IAccountRepository {
 
-    async create(data: ICreateAccountDTO): Promise<Account> {
+    async create(data: ICreateAccountDTO): Promise<IAccountResponseDTO> {
         try {
             const account = await prisma.account.create({
                 data: {
                     ...data,
                 }
             });
-            return account as Account;
+            const accontParsed = AccountResponseDTO.parse(account);
+            return accontParsed as IAccountResponseDTO;
 
         } catch (err: any) {
             if (err instanceof Prisma.PrismaClientKnownRequestError) {
@@ -35,7 +37,7 @@ export class PrismaAccountRepository implements IAccountRepository {
         }
     }
 
-    async update(data: IUpdateAccountDTO): Promise<Account> {
+    async update(data: IUpdateAccountDTO): Promise<IAccountResponseDTO> {
         const { id, ...dataWithoutId } = data;
         try {
             const account =  await prisma.account.update({
@@ -43,7 +45,8 @@ export class PrismaAccountRepository implements IAccountRepository {
                 data: { ...dataWithoutId }
             });
 
-            return account as Account;
+            const accontParsed = AccountResponseDTO.parse(account);
+            return accontParsed as IAccountResponseDTO;
 
         } catch (err: any) {
             if (err instanceof Prisma.PrismaClientKnownRequestError) {
@@ -53,7 +56,7 @@ export class PrismaAccountRepository implements IAccountRepository {
         }
     }
 
-    async updatePassword(data: IUpdatePasswordDTO): Promise<Account> {
+    async updatePassword(data: IUpdatePasswordDTO): Promise<IAccountResponseDTO> {
         const { id, ...dataWithoutId } = data;
         try {
             const account =  await prisma.account.update({
@@ -61,8 +64,8 @@ export class PrismaAccountRepository implements IAccountRepository {
                 data: { ...dataWithoutId }
             });
 
-            return account as Account;
-
+            const accontParsed = AccountResponseDTO.parse(account);
+            return accontParsed as IAccountResponseDTO;
         } catch (err: any) {
             if (err instanceof Prisma.PrismaClientKnownRequestError) {
                 throw new AppError("Erro ao atualizar o usuário: " + err, 500);
@@ -85,7 +88,7 @@ export class PrismaAccountRepository implements IAccountRepository {
         }
     }
 
-    async findByEmail(email: string): Promise<Account | null> {
+    async findByEmail(email: string): Promise<IAccountResponseDTO | null> {
         if (!email) {
             return null;
         }
@@ -96,13 +99,18 @@ export class PrismaAccountRepository implements IAccountRepository {
             }
         });    
 
-        return account as IUser | null;
-    }
-
-    async findById(id: UUID): Promise<Account | null> {
-        if (!id) {
+        if(!account) {
             return null;
         }
+
+        const accontParsed = AccountResponseDTO.parse(account);
+        return accontParsed as IAccountResponseDTO;
+    }
+
+    async findById(id: UUID): Promise<IAccountResponseDTO | null> {
+        if (!id) {
+            return null;
+        }   
 
         const account = await prisma.account.findUnique({
             where: {
@@ -110,7 +118,12 @@ export class PrismaAccountRepository implements IAccountRepository {
             }
         });
 
-        return account as IUser | null;
+        if(!account) {
+            return null;
+        }
+
+        const accontParsed = AccountResponseDTO.parse(account);
+        return accontParsed as IAccountResponseDTO;
     }
 
 };

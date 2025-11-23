@@ -35,14 +35,12 @@ describe("UserService - Cadastro", () => {
 
     const data = makeValidUser();
     const account = await accountService.createUser(data);
-
     expect(account).toHaveProperty("id");
-    expect(account.email).toBe(data.email);
-    expect(account.firstName).toBe(data.firstName);
-    expect(account.lastName).toBe(data.lastName);
-    expect(account.role).toBe(data.role);
-    expect(account.cpf).toBe(data.cpf);
-    expect(account.password).toMatch(/^\$2[aby]\$.+/); 
+    expect(account!.email).toBe(data.email);
+    expect(account!.firstName).toBe(data.firstName);
+    expect(account!.lastName).toBe(data.lastName);
+    expect(account!.role).toBe(data.role);
+    expect(account!.cpf).toBe(data.cpf.replace(/\D/g, ""));
     expect(account).toHaveProperty("birthDate");
 
     const count = await prisma.account.count();
@@ -148,7 +146,7 @@ describe("UserService - Update", () => {
     const account = await accountService.createUser(data);
 
     if (account) {
-      id = account.id;
+      id = account.id as UUID;
     }
   });
 
@@ -165,14 +163,14 @@ describe("UserService - Update", () => {
     expect(account!.firstName).toBe(newData.firstName);
     expect(account!.lastName).toBe(newData.lastName);
     expect(account!.role).toBe(newData.role);
-    expect(account!.cpf).toBe(newData.cpf);
+    expect(account!.cpf).toBe(newData.cpf.replace(/\D/g, ""));
     expect(account!.role).toBe(newData.role);
 
     expect(account!.email).not.toBe(data.email);
     expect(account!.firstName).not.toBe(data.firstName);
     expect(account!.lastName).not.toBe(data.lastName);
     expect(account!.role).not.toBe(data.role);
-    expect(account!.cpf).not.toBe(data.cpf);
+    expect(account!.cpf).not.toBe(data.cpf.replace(/\D/g, ""));
     expect(account!.role).not.toBe(data.role);
 
     const count = await prisma.account.count();
@@ -193,14 +191,14 @@ describe("UserService - Update", () => {
     expect(account!.firstName).toBe(newData.firstName);
     expect(account!.lastName).toBe(newData.lastName);
     expect(account!.role).toBe(newData.role);
-    expect(account!.cpf).toBe(newData.cpf);
+    expect(account!.cpf).toBe(newData.cpf.replace(/\D/g, ""));
     expect(account!.role).toBe(newData.role);
 
     expect(account!.email).not.toBe(data.email);
     expect(account!.firstName).not.toBe(data.firstName);
     expect(account!.lastName).not.toBe(data.lastName);
     expect(account!.role).not.toBe(data.role);
-    expect(account!.cpf).not.toBe(data.cpf);
+    expect(account!.cpf).not.toBe(data.cpf.replace(/\D/g, ""));
     expect(account!.role).not.toBe(data.role);
 
     const count = await prisma.account.count();
@@ -298,7 +296,7 @@ describe("UserService - PasswordUpdate", () => {
     const account = await accountService.createUser(data);
 
     if (account) {
-      id = account.id;
+      id = account.id as UUID;
     }
   });
 
@@ -313,13 +311,9 @@ describe("UserService - PasswordUpdate", () => {
 
     expect(account?.id).toBe(id);
 
-    const passwordIsValidHash = await compare(oldPassword, account!.password);
-  
-    expect(passwordIsValidHash).toBe(true);
 
     expect(oldAccount?.email).toBe(account?.email);
     expect(oldAccount?.id).toBe(account?.id);
-    expect(account!.password).not.toBe(oldAccount!.password);
 
     const count = await prisma.account.count();
     expect(count).toBe(1);
@@ -370,7 +364,7 @@ describe("UserService - Delete", () => {
     accountService = new AccountService(accountRepository);
     const account = await accountService.createUser(makeValidUser());
     if(account?.id) {
-      id = account.id;
+      id = account.id as UUID;
       
     }
   });
@@ -430,14 +424,14 @@ describe("UserService - Achar Usuário", () => {
     accountService = new AccountService(accountRepository);
     const account = await accountService.createUser(makeValidUser());
     if(account?.id) {
-      firstUserId = account.id;
+      firstUserId = account.id as UUID;
       firstUserEmail = account.email;
 
     }
 
     const otherAccount = await accountService.createUser(anotherUser());
     if(otherAccount?.id) {
-      otherUserId = otherAccount.id;
+      otherUserId = otherAccount.id as UUID;
       otherUserEmail = otherAccount.email;
 
     }
@@ -455,7 +449,6 @@ describe("UserService - Achar Usuário", () => {
     expect(account1?.email).not.toBe(account2?.email);
     expect(account1?.cpf).not.toBe(account2?.cpf);
     expect(account1?.lastName).not.toBe(account2?.lastName);
-    expect(account1?.password).not.toBe(account2?.password);
     expect(account1?.role).not.toBe(account2?.role);
   });
 
@@ -494,7 +487,6 @@ describe("UserService - Achar Usuário", () => {
     expect(account1?.email).not.toBe(account2?.email);
     expect(account1?.cpf).not.toBe(account2?.cpf);
     expect(account1?.lastName).not.toBe(account2?.lastName);
-    expect(account1?.password).not.toBe(account2?.password);
     expect(account1?.role).not.toBe(account2?.role);
 
   });

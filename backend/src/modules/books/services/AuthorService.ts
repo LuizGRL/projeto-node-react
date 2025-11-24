@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IAuthorsRepository } from "../repositories/interface/IAuthorsRepository";
+import type { IAuthorsRepository } from "../repositories/interface/IAuthorsRepository";
 import { ICreateAuthorDTO, IUpdateAuthorDTO } from "../dtos/AuthorDTO";
 import { IAuthor } from "../entities/interfaces/IAuthor";
 import { UUID } from "crypto";

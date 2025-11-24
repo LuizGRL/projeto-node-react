@@ -1,14 +1,13 @@
 import { inject, injectable } from "tsyringe";
 import { ResponseValidator } from "../../../shared/infra/utils/validate";
 import { validateUUID } from "../../../shared/infra/utils/validateUUID";
-import { PublisherService } from "../services/PublisherService";
 import { 
     CreatePublisherSchema, 
     ICreatePublisherDTO, 
     IUpdatePublisherDTO, 
     UpdatePublisherSchema 
 } from "../dtos/PublisherDTO";
-import { IPublisherService } from "../services/interfaces/IPublisherService";
+import type { IPublisherService } from "../services/interfaces/IPublisherService";
 
 @injectable()
 export class PublisherController {

@@ -3,7 +3,7 @@ import { ICreatePublisherDTO, IUpdatePublisherDTO } from "../dtos/PublisherDTO";
 import { AppError } from "shared/errors/AppError";
 import { IPublisherService } from "./interfaces/IPublisherService";
 import { IPublisher } from "../entities/interfaces/IPublisher";
-import { IPublishersRepository } from "../repositories/interface/IPublishersRepository";
+import type { IPublishersRepository } from "../repositories/interface/IPublishersRepository";
 import { UUID } from "crypto";
 
 @injectable()

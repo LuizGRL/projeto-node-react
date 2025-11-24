@@ -9,7 +9,7 @@ import {
     UpdateBookSchema 
 } from "../dtos/BookDTO";
 import { UUID } from "crypto";
-import { IBookService } from "../services/interfaces/IBookService";
+import type { IBookService } from "../services/interfaces/IBookService";
 
 @injectable()
 export class BookController {

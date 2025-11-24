@@ -9,7 +9,7 @@ import {
     UpdateCategorySchema 
 } from "../dtos/CategoryDTO";
 import { UUID } from "crypto";
-import { ICategoryService } from "../services/interfaces/ICategoryService";
+import type { ICategoryService } from "../services/interfaces/ICategoryService";
 
 @injectable()
 export class CategoryController {

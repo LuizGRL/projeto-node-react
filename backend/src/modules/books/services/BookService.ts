@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
-import { ICategoriesRepository } from "../repositories/interface/ICategoriesRepository";
-import { IAuthorsRepository } from "../repositories/interface/IAuthorsRepository";
-import { IPublishersRepository } from "../repositories/interface/IPublishersRepository";
-import { IBooksRepository } from "../repositories/interface/IBooksRepository";
+import type { ICategoriesRepository } from "../repositories/interface/ICategoriesRepository";
+import type { IAuthorsRepository } from "../repositories/interface/IAuthorsRepository";
+import type { IPublishersRepository } from "../repositories/interface/IPublishersRepository";
+import type{ IBooksRepository } from "../repositories/interface/IBooksRepository";
 import { ICreateBookDTO, IUpdateBookDTO } from "../dtos/BookDTO";
 import { IBook } from "../entities/interfaces/IBook";
 import { AppError } from "shared/errors/AppError";

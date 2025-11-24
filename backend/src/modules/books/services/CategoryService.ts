@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { ICategoriesRepository } from "../repositories/interface/ICategoriesRepository";
+import type { ICategoriesRepository } from "../repositories/interface/ICategoriesRepository";
 import { ICreateCategoryDTO, IUpdateCategoryDTO } from "../dtos/CategoryDTO";
 import { ICategory } from "../entities/interfaces/ICategory";
 import { AppError } from "shared/errors/AppError";

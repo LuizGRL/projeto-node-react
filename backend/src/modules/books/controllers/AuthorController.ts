@@ -1,7 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { ResponseValidator } from "../../../shared/infra/utils/validate"; // Ajuste o caminho conforme sua estrutura
 import { validateUUID } from "../../../shared/infra/utils/validateUUID";
-import { AuthorService } from "../services/AuthorService";
 import { 
     CreateAuthorSchema, 
     ICreateAuthorDTO, 
@@ -9,7 +8,7 @@ import {
     UpdateAuthorSchema 
 } from "../dtos/AuthorDTO";
 import { UUID } from "crypto";
-import { IAuthorService } from "../services/interfaces/IAuthorService";
+import type { IAuthorService } from "../services/interfaces/IAuthorService";
 
 @injectable()
 export class AuthorController {

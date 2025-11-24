@@ -3,6 +3,10 @@ import "dotenv/config";
 import http from "http";
 import { AppError } from "../../errors/AppError";
 import { accountsRoutes } from "./routes/accounts.rotes";
+import { authorsRoutes } from "./routes/authors.rotes";
+import { booksRoutes } from "./routes/books.rotes";
+import { categoriesRoutes } from "./routes/categories.rotes";
+import { publishersRoutes } from "./routes/publisher.rotes";
 
 const server = http.createServer(async (req, res) => {
   const { url } = req;
@@ -18,6 +22,38 @@ const server = http.createServer(async (req, res) => {
 
       if (!res.writableEnded) {
         return sendJson(404, { error: "Rota não encontrada dentro de /accounts" });
+      }
+      return;
+    }
+
+    if (url?.startsWith("/authors")) {
+      await authorsRoutes(req, res);
+      if (!res.writableEnded) {
+        return sendJson(404, { error: "Rota não encontrada em authors" });
+      }
+      return;
+    }
+
+    if (url?.startsWith("/books")) {
+      await booksRoutes(req, res);
+      if (!res.writableEnded) {
+        return sendJson(404, { error: "Rota não encontrada em books" });
+      }
+      return;
+    }
+
+    if (url?.startsWith("/categories")) {
+      await categoriesRoutes(req, res);
+      if (!res.writableEnded) {
+        return sendJson(404, { error: "Rota não encontrada em categories" });
+      }
+      return;
+    }
+
+    if (url?.startsWith("/publishers")) {
+      await publishersRoutes(req, res);
+      if (!res.writableEnded) {
+        return sendJson(404, { error: "Rota não encontrada em publishers" });
       }
       return;
     }

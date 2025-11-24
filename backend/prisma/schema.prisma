@@ -31,3 +31,68 @@ model Account {
   token_version Int  @default(1) @map("token_version")
   @@map("accounts")
 }
+
+model Author {
+  id        String   @id @default(uuid())
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  books     Book[]   
+
+  @@map("authors")
+}
+
+model Publisher {
+  id        String   @id @default(uuid())
+  name      String
+  city      String
+  country   String
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  books     Book[]
+
+  @@map("publishers")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique 
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  books     Book[]
+
+  @@map("categories")
+}
+
+model Book {
+  id                String   @id @default(uuid())
+  title             String
+  isbn              String   @unique
+  description       String?  @db.Text 
+  coverUrl          String?  @map("cover_url")
+  pages             Int
+  
+  quantityTotal     Int      @default(1) @map("quantity_total")
+  quantityAvailable Int      @default(1) @map("quantity_available")
+  
+  publicationDate   DateTime @map("publication_date")
+  
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  publisherId       String   @map("publisher_id")
+  publisher         Publisher @relation(fields: [publisherId], references: [id])
+
+  authors           Author[]
+
+  categories        Category[]
+
+  @@map("books")
+}

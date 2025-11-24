@@ -1,12 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import { AuthenticateAccountController } from "modules/accounts/controllers/AuthenticateAccountController";
 import { adaptRoute } from "../adapters/NodeRouteAdapter";
 import { container } from "tsyringe";
-import { AccountController } from "modules/accounts/controllers/AccountController";
-import "shared/container";
+import { AuthenticateAccountController } from "../../../../modules/accounts/controllers/AuthenticateAccountController";
+import { AccountController } from "../../../../modules/accounts/controllers/AccountController";
+import { ERole } from "../../../../modules/accounts/entities/enums/ERole";import "shared/container";
 import { verifyAuth } from "../utils/verifyAuth";
 import { checkRole } from "../utils/checkRole";
-import { ERole } from "modules/accounts/entities/enums/ERole";
 import { ensureOwner } from "../utils/ensureOwner";
 import { parseBody } from "../utils/parseBody";
 
@@ -25,6 +24,14 @@ export async function accountsRoutes(req: IncomingMessage, res: ServerResponse) 
     try {
       const user = await verifyAuth(req); 
       checkRole(user, [ERole.ADMIN]); 
+      return adaptRoute(accountController.create.bind(accountController))(req, res);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  if (url === mainRoute + "/createADMIN" && method === "POST") {
+    try {
       return adaptRoute(accountController.create.bind(accountController))(req, res);
     } catch (err) {
       throw err;

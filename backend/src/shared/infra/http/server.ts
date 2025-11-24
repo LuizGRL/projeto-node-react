@@ -2,7 +2,7 @@ import "reflect-metadata";
 import "dotenv/config";
 import http from "http";
 import { AppError } from "../../errors/AppError";
-import { accountsRoutes } from "./routes/acconts.rotes";
+import { accountsRoutes } from "./routes/accounts.rotes";
 
 const server = http.createServer(async (req, res) => {
   const { url } = req;
@@ -13,7 +13,6 @@ const server = http.createServer(async (req, res) => {
   };
 
   try {
-
     if (url?.startsWith("/accounts") || url?.startsWith("/sessions")) {
       await accountsRoutes(req, res);
 
@@ -34,4 +33,8 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(4200, () => console.log("Server limpo e organizado rodando!"));
+if (process.env.NODE_ENV !== "test") {
+  server.listen(4200, () => console.log("Server limpo e organizado rodando na porta 4200!"));
+}
+
+export { server };

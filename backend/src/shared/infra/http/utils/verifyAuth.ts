@@ -2,8 +2,7 @@ import { IncomingMessage } from "http";
 import { verify } from "jsonwebtoken";
 import { AppError } from "../../../errors/AppError";
 import authConfig from "../../../../config/auth";
-import { PrismaAccountRepository } from "../../../../modules/accounts/repositories/PrismaAccountRepository"; // 🆕 Importe o repositório
-import { UUID } from "crypto";
+import { PrismaAccountRepository } from "../../../../modules/accounts/repositories/PrismaAccountRepository";
 
 interface IPayload {
   sub: string;
@@ -23,7 +22,6 @@ export async function verifyAuth(req: IncomingMessage) {
   try {
     const decoded = verify(token, authConfig.secret_token) as unknown as IPayload;
 
-
     const accountRepository = new PrismaAccountRepository();
     const user = await accountRepository.findById(decoded.sub);
 
@@ -31,7 +29,6 @@ export async function verifyAuth(req: IncomingMessage) {
       throw new AppError("User does not exist", 401);
     }
 
-    console.log(decoded.token_version,  user.token_version)
 
     if (decoded.token_version !== user.token_version) {
       throw new AppError("Token inválido (Sessão expirada)", 401);

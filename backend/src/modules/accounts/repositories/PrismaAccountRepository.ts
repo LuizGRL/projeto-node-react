@@ -93,41 +93,19 @@ export class PrismaAccountRepository implements IAccountRepository {
     }
 
     async findByEmail(email: string): Promise<IAccountResponseDTO | null> {
-        if (!email) {
-            return null;
-        }
+        if (!email) return null;
 
-        const account = await prisma.account.findUnique({
-            where: {
-                email: email
-            }
-        });    
+        const account = await prisma.account.findUnique({where: { email: email }});    
 
-        if(!account) {
-            return null;
-        }
-
-        const accontParsed = AccountResponseDTO.parse(account);
-        return accontParsed as IAccountResponseDTO;
+        if(!account) return null;
+        
+        return account as IAccountResponseDTO;
     }
 
-    async findById(id: UUID): Promise<IAccountResponseDTO | null> {
-        if (!id) {
-            return null;
-        }   
-
-        const account = await prisma.account.findUnique({
-            where: {
-                id: id
-            }
-        });
-
-        if(!account) {
-            return null;
-        }
-
-        const accontParsed = AccountResponseDTO.parse(account);
-        return accontParsed as IAccountResponseDTO;
+    async findById(id: string): Promise<IAccountResponseDTO | null> {
+        const user = await prisma.account.findUnique({ where: { id } });
+        if (!user) return null;
+        return user as IAccountResponseDTO;
     }
 
     async findLoginUser(email: string): Promise<Account | null> {

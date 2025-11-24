@@ -9,13 +9,13 @@ export interface IBook {
     title: string,
     isbn: string,
     authors: IAuthor[],
-    publication_date: Date,
+    publicationDate: Date,
     description: string,
     publisher: IPublisher,
     category: ICategory[],
-    cover_url: string
+    coverUrl: string
     pages: Int,
-    quantity_total: Int
-    quantity_available: Int
+    quantityTotal: Int
+    quantityAvailable: Int
 
 }

@@ -4,7 +4,7 @@ import { adaptRoute } from "../adapters/NodeRouteAdapter";
 import { ERole } from "../../../../modules/accounts/entities/enums/ERole";
 import { verifyAuth } from "../utils/verifyAuth";
 import { checkRole } from "../utils/checkRole";
-import { PublisherController } from "modules/books/controllers/PublishController";
+import { PublisherController } from "../../../../modules/books/controllers/PublishController";
 
 const publisherController = container.resolve(PublisherController);
 

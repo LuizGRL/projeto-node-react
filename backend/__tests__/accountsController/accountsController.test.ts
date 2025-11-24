@@ -120,7 +120,6 @@ describe("Account Routes Integration", () => {
           role: "VISITOR"
         });
 
-      if (response.status !== 201) console.log("Erro Create:", response.body);
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty("id");

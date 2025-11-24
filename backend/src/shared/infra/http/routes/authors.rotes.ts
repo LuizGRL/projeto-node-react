@@ -4,7 +4,7 @@ import { adaptRoute } from "../adapters/NodeRouteAdapter";
 import { ERole } from "../../../../modules/accounts/entities/enums/ERole";
 import { verifyAuth } from "../utils/verifyAuth";
 import { checkRole } from "../utils/checkRole";
-import { AuthorController } from "modules/books/controllers/AuthorController";
+import { AuthorController } from "../../../../modules/books/controllers/AuthorController";
 
 const authorController = container.resolve(AuthorController);
 

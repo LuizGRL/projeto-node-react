@@ -43,7 +43,6 @@ export class PrismaBooksRepository implements IBooksRepository {
             if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
                 throw new AppError("Já existe um livro com este ISBN", 409);
             }
-            console.error(err);
             throw new AppError("Erro ao criar livro", 500);
         }
     }

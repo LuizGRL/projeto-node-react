@@ -8,12 +8,12 @@ export const CreateBookSchema = z.object({
         .regex(isbnRegex, "ISBN inválido")
         .transform(val => val.replace(/[^0-9X]/g, "")), 
         
-    publication_date: z.coerce.date(), 
+    publicationDate: z.coerce.date(), 
     description: z.string().max(1000).optional(),
-    cover_url: z.string().url().optional(),
+    coverUrl: z.string().url().optional(),
     pages: z.number().int().positive(),
-    quantity_total: z.number().int().nonnegative(),
-    quantity_available: z.number().int().nonnegative().optional(),
+    quantityTotal: z.number().int().nonnegative(),
+    quantityAvailable: z.number().int().nonnegative().optional(),
     publisherId: z.string().uuid(),
     authorIds: z.array(z.string().uuid()).min(1, "Selecione ao menos um autor"),
     categoryIds: z.array(z.string().uuid()).min(1, "Selecione ao menos uma categoria"),

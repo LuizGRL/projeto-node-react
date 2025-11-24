@@ -4,8 +4,11 @@ import { adaptRoute } from "../adapters/NodeRouteAdapter";
 import { container } from "tsyringe";
 import { AccountController } from "modules/accounts/controllers/AccountController";
 import "shared/container";
-
-
+import { verifyAuth } from "../utils/verifyAuth";
+import { checkRole } from "../utils/checkRole";
+import { ERole } from "modules/accounts/entities/enums/ERole";
+import { ensureOwner } from "../utils/ensureOwner";
+import { parseBody } from "../utils/parseBody";
 
 const authController = container.resolve(AuthenticateAccountController);
 const accountController = container.resolve(AccountController);
@@ -19,26 +22,56 @@ export async function accountsRoutes(req: IncomingMessage, res: ServerResponse) 
   }
 
   if (url === mainRoute + "/create" && method === "POST") {
-    return adaptRoute(accountController.create.bind(accountController))(req,res);
+    try {
+      const user = await verifyAuth(req); 
+      checkRole(user, [ERole.ADMIN]); 
+      return adaptRoute(accountController.create.bind(accountController))(req, res);
+    } catch (err) {
+      throw err;
+    }
   }
 
   if (url === mainRoute + "/delete" && method === "DELETE") {
+    const user = await verifyAuth(req); 
+    checkRole(user, [ERole.ADMIN]); 
     return adaptRoute(accountController.delete.bind(accountController))(req,res);
   }
 
   if (url === mainRoute + "/update" && method === "PUT") {
+    const user = await verifyAuth(req); 
+    checkRole(user, [ERole.ADMIN]); 
     return adaptRoute(accountController.update.bind(accountController))(req,res);
   }
-1
+
   if (url === mainRoute + "/updatePassword" && method === "PUT") {
-    return adaptRoute(accountController.updatePassword.bind(accountController))(req,res);
+    try {
+      const user = await verifyAuth(req); 
+      checkRole(user, [ERole.CUSTOMER, ERole.ADMIN, ERole.VISITOR]); 
+      const body = await parseBody(req);
+      ensureOwner(user.email, body.email)
+      return adaptRoute(accountController.findByEmail.bind(accountController), body)(req,res);
+    } catch (err) {
+      throw err;
+    }
   }
 
- if (url === mainRoute + "/getById" && method === "GET") {
-    return adaptRoute(accountController.findById.bind(accountController))(req,res);
+  if (url === mainRoute + "/getById" && method === "GET") {
+    try {
+      const user = await verifyAuth(req); 
+      checkRole(user, [ERole.ADMIN]); 
+      return adaptRoute(accountController.findById.bind(accountController))(req,res);
+    } catch (err) {
+      throw err;
+    }
   } 
 
   if (url === mainRoute + "/getByEmail" && method === "GET") {
-    return adaptRoute(accountController.findByEmail.bind(accountController))(req,res);
+    try {
+      const user = await verifyAuth(req); 
+      checkRole(user, [ERole.ADMIN]); 
+      return adaptRoute(accountController.findByEmail.bind(accountController))(req,res);
+    } catch (err) {
+      throw err;
+    }
   } 
 }

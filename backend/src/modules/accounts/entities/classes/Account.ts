@@ -1,6 +1,7 @@
 import type { UUID } from "crypto";
 import type { ERole } from "../enums/ERole";
 import type { IUser } from "../interfaces/IUser";
+import { Int } from "effect/Schema";
 
 export class Account implements IUser {
     id: UUID;
@@ -13,6 +14,7 @@ export class Account implements IUser {
     role: ERole;
     createdAt: Date;
     updatedAt: Date;
+    token_version: Int;
 
     constructor(props: IUser) {
         this.id = props.id;
@@ -25,5 +27,6 @@ export class Account implements IUser {
         this.role = props.role;
         this.createdAt = props.createdAt;
         this.updatedAt = props.updatedAt;
+        this.token_version = props.token_version;
     }
 }

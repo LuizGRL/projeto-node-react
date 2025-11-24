@@ -41,6 +41,7 @@ export class AccountService implements IAccountService {
     async updateUser(data: IUpdateAccountDTO): Promise<IAccountResponseDTO | null> {
 
         const result = this.accountEmailAndCPFIsValid(data as IUser);
+        let upgradeToken = false;
 
         if (typeof(result) !== 'boolean') {
             throw result;
@@ -51,7 +52,11 @@ export class AccountService implements IAccountService {
             throw findAccountresult;
         }
 
-        return this.accountRepository.update(data);
+        if (data.role !== findAccountresult.role) {
+            upgradeToken = true;
+        }
+
+        return this.accountRepository.update(data, upgradeToken);
     }
 
     async updatePassword(data: IUpdatePasswordDTO): Promise<IAccountResponseDTO | null> {
@@ -72,7 +77,6 @@ export class AccountService implements IAccountService {
     
     async deleteUser(data: Account): Promise<boolean> {
 
-        console.log(112123)
         const findAccountresult = await this.findAccount(data as IUser);
         if (findAccountresult instanceof AppError) {
             throw findAccountresult;

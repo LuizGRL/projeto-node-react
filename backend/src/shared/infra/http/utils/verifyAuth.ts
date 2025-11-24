@@ -2,15 +2,17 @@ import { IncomingMessage } from "http";
 import { verify } from "jsonwebtoken";
 import { AppError } from "../../../errors/AppError";
 import authConfig from "../../../../config/auth";
+import { PrismaAccountRepository } from "../../../../modules/accounts/repositories/PrismaAccountRepository"; // 🆕 Importe o repositório
+import { UUID } from "crypto";
 
 interface IPayload {
   sub: string;
   role: string;
+  token_version: number;
 }
 
-export function verifyAuth(req: IncomingMessage) {
+export async function verifyAuth(req: IncomingMessage) {
   const authHeader = req.headers.authorization;
-  console.log(authHeader)
 
   if (!authHeader) {
     throw new AppError("Token missing", 401);
@@ -19,13 +21,30 @@ export function verifyAuth(req: IncomingMessage) {
   const [, token] = authHeader.split(" ");
 
   try {
-    const decoded = verify(token, authConfig.secret_token) as IPayload;
+    const decoded = verify(token, authConfig.secret_token) as unknown as IPayload;
+
+
+    const accountRepository = new PrismaAccountRepository();
+    const user = await accountRepository.findById(decoded.sub);
+
+    if (!user) {
+      throw new AppError("User does not exist", 401);
+    }
+
+    console.log(decoded.token_version,  user.token_version)
+
+    if (decoded.token_version !== user.token_version) {
+      throw new AppError("Token inválido (Sessão expirada)", 401);
+    }
 
     return {
-      id: decoded.sub,
-      role: decoded.role
+      id: user.id,
+      email: user.email,
+      role: user.role 
     };
-  } catch {
+
+  } catch (err) {
+    if (err instanceof AppError) throw err;
     throw new AppError("Invalid token", 401);
   }
 }

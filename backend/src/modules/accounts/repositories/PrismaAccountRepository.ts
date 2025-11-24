@@ -10,6 +10,8 @@ import { UUID } from "crypto";
 import { IUpdateAccountDTO } from "../dtos/IUpdateAccountDTO";
 import { IUpdatePasswordDTO } from "../dtos/IUpdatePasswordDTO";
 import { AccountResponseDTO, IAccountResponseDTO } from "../dtos/IAccountResponseDTO";
+import { ILoginRequestDTO } from "../dtos/ILoginDTO";
+import { isValidEmail } from "shared/infra/utils/validateEmail";
 
 @injectable()
 export class PrismaAccountRepository implements IAccountRepository {
@@ -37,14 +39,16 @@ export class PrismaAccountRepository implements IAccountRepository {
         }
     }
 
-    async update(data: IUpdateAccountDTO): Promise<IAccountResponseDTO> {
+    async update(data: IUpdateAccountDTO, upgradeToken?: boolean): Promise<IAccountResponseDTO> {
         const { id, ...dataWithoutId } = data;
         try {
             const account =  await prisma.account.update({
                 where: { id },
-                data: { ...dataWithoutId }
+                data: {
+                    ...dataWithoutId,
+                    ...(upgradeToken ? { token_version: { increment: 1 } } : {})
+                }
             });
-
             const accontParsed = AccountResponseDTO.parse(account);
             return accontParsed as IAccountResponseDTO;
 
@@ -124,6 +128,25 @@ export class PrismaAccountRepository implements IAccountRepository {
 
         const accontParsed = AccountResponseDTO.parse(account);
         return accontParsed as IAccountResponseDTO;
+    }
+
+    async findLoginUser(email: string): Promise<Account | null> {
+
+        if (!email) {
+            return null;
+        }
+
+        const account = await prisma.account.findUnique({
+            where: {
+                email: email
+            }
+        });    
+
+        if(!account) {
+            return null;
+        }
+
+        return account as Account;
     }
 
 };

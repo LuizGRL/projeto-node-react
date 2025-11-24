@@ -4,10 +4,12 @@ import { parseBody } from "../utils/parseBody";
 
 type ControllerMethod = (httpRequest: IHttpRequest) => Promise<any>;
 
-export const adaptRoute = (controller: ControllerMethod) => {
+export const adaptRoute = (controller: ControllerMethod, body?: any) => {
   return async (req: IncomingMessage, res: ServerResponse) => {
-    const body = await parseBody(req);
 
+    if(!body) {
+      body = await parseBody(req);
+    }
     const httpRequest: IHttpRequest = {
       body,
       headers: req.headers,

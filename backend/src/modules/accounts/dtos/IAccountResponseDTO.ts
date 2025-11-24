@@ -12,7 +12,8 @@ export const AccountResponseDTO = z.object({
     .transform((v) => v.replace(/\D/g, ""))
     .refine(isValidCPF, "CPF inválido"),    
     birthDate: z.coerce.date(),
-    role: z.nativeEnum(ERole)
+    role: z.nativeEnum(ERole),
+    token_version: z.number().int().optional()
 })
 
 export type IAccountResponseDTO = z.infer<typeof AccountResponseDTO>;

@@ -82,7 +82,6 @@ export class AccountController {
                 body: {message: "Usuário não econtrado."}
             } 
         }
-        console.log(account)
 
         return {
             statusCode: 200,

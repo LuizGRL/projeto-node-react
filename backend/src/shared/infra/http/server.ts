@@ -9,7 +9,16 @@ import { categoriesRoutes } from "./routes/categories.rotes";
 import { publishersRoutes } from "./routes/publisher.rotes";
 
 const server = http.createServer(async (req, res) => {
-  const { url } = req;
+  const { url, method } = req;
+
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (method === "OPTIONS") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
 
   const sendJson = (code: number, data: any) => {
     res.writeHead(code, { "Content-Type": "application/json" });

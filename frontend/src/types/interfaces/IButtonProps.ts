@@ -1,8 +1,7 @@
-import * as LucideIcons from "lucide-react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-export interface IButtonProps {
-  iconName?: keyof typeof LucideIcons;
-  label?: string;
-  disabled?: boolean;
-  onClick: () => void;
+export interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+    children: ReactNode; 
+    variant?: 'primary' | 'secondary' | 'danger' | 'outline'; 
+    loading?: boolean;
 }

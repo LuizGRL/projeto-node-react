@@ -1,10 +1,13 @@
 export interface IInputProps {
-    label: string;
-    cpf?: boolean;
-    required?: boolean;
-    placeholder?: string;
-    min?: number;
-    max?: number;
-    disabled?: boolean;
-    titleCase?: boolean;
+  label: string;
+  value: string;
+  onChange: (value: string) => void; 
+  type?: string;
+  min?: number;
+  max?: number;
+  disabled?: boolean;
+  placeholder?: string;
+  required?: boolean;
+  titleCase?: boolean;
+  cpf?: boolean;
 }

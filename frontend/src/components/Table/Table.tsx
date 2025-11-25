@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import type { SortingState } from "@tanstack/react-table";
 import AppIconButton from "../Button/AppIconButton";
-import type { IDropdownOption } from "../../types/IDropDownProps";
+import type { IDropdownOption } from "../../types/interfaces/IDropDownProps";
 import AppDropdown from "../Dropdown/AppDropdown";
 import { ArrowUp, ArrowDown } from "lucide-react";
 
@@ -105,7 +105,7 @@ export function Table<T extends { id: string }>({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center gap-[10px]">
         {onAddClick && (
           <AppIconButton
             onClick={() => {

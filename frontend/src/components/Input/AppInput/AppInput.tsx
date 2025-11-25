@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { InputWrapper } from "../styles";
-import type { IInputProps } from "../../../types/IInputProps";
+import type { IInputProps } from "../../../types/interfaces/IInputProps";
 
 function toTitleCase(str: string): string {
   return str

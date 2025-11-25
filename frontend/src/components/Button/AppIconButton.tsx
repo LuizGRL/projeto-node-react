@@ -1,6 +1,6 @@
 import type { LucideProps } from "lucide-react";
 import * as LucideIcons from "lucide-react";
-import type { IButtonProps } from "../../types/IButtonProps";
+import type { IButtonProps } from "../../types/interfaces/IButtonProps";
 
 export default function AppIconButton({ iconName, label, onClick, disabled }: IButtonProps) {
 

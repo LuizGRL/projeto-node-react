@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { IInputProps } from "../../../types/IInputProps";
+import type { IInputProps } from "../../../types/interfaces/IInputProps";
 import { InputWrapper } from "../styles";
 
 function AppNumInput({label, min, max}:IInputProps){

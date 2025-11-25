@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import type { IDropDownProps } from "../../types/IDropDownProps";
+import type { IDropDownProps } from "../../types/interfaces/IDropDownProps";
 
 function AppDropdown({ label, options, onChange }: IDropDownProps) {
   const [open, setOpen] = useState(false);

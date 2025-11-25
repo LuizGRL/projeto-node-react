@@ -1,4 +1,4 @@
-import type { IButtonProps } from "../../types/IButtonProps";
+import type { IButtonProps } from "../../types/interfaces/IButtonProps";
 
 function AppButton({label, onClick, disabled} : IButtonProps) {
     return(

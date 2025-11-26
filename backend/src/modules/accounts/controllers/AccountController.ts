@@ -102,4 +102,18 @@ export class AccountController {
             body: account
         } 
     }
+
+    async findAllUsers(httpRequest: any) { 
+        const accounts = await this.accountService.findAllAccounts();
+        if (accounts === null) {
+            return {
+                statusCode: 400,
+                body: {message: "Usuário não econtrado."}
+            } 
+        }
+        return {
+            statusCode: 200,
+            body: accounts
+        } 
+    }
 }

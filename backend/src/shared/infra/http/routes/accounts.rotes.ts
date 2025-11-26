@@ -81,4 +81,14 @@ export async function accountsRoutes(req: IncomingMessage, res: ServerResponse) 
       throw err;
     }
   } 
+
+  if (url === mainRoute + "/findAllUsers" && method === "GET") {
+    try {
+      const user = await verifyAuth(req); 
+      checkRole(user, [ERole.ADMIN]); 
+      return adaptRoute(accountController.findAllUsers.bind(accountController))(req,res);
+    } catch (err) {
+      throw err;
+    }
+  } 
 }

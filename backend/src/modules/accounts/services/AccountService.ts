@@ -124,4 +124,9 @@ export class AccountService implements IAccountService {
         return account;
     }
 
+    async findAllAccounts(): Promise<IAccountResponseDTO[]> {
+        return this.accountRepository.findAllUsers();
+    
+    }
+
 }

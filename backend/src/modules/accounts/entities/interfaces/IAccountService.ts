@@ -16,5 +16,6 @@ export interface IAccountService {
     getUserByEmail(email: string): Promise<IAccountResponseDTO | null>
     accountEmailAndCPFIsValid(data: IUser): AppError | boolean
     findAccount(data: IUser): Promise<IAccountResponseDTO | AppError>
+    findAllAccounts(): Promise<IAccountResponseDTO[]>
     
 }

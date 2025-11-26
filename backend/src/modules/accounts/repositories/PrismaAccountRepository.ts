@@ -127,5 +127,10 @@ export class PrismaAccountRepository implements IAccountRepository {
         return account as Account;
     }
 
+    async findAllUsers(): Promise<IAccountResponseDTO[]> {
+        const accounts =  await prisma.account.findMany({});
+        return accounts as IAccountResponseDTO[];
+    }
+
 };
 

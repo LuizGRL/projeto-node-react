@@ -10,6 +10,7 @@ export interface IAccountRepository {
     update(data: IUpdateAccountDTO, upgradeToken?: boolean): Promise<IAccountResponseDTO>;
     updatePassword(data: IUpdatePasswordDTO) : Promise<IAccountResponseDTO>;
     delete(data: Account) : Promise<boolean>;
+    findAllUsers(): Promise<IAccountResponseDTO[]>;
     findByEmail(email: string): Promise<IAccountResponseDTO | null>;
     findById(id: UUID): Promise<IAccountResponseDTO | null>
     findLoginUser(email: string): Promise<Account | null>;

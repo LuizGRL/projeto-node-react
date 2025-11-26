@@ -4,6 +4,7 @@ import { PrivateRoute } from "./PrivateRoute";
 import { MainLayout } from "../layouts/MainLayout";
 import { LibraryMainPage } from "../pages/Library";
 import { AccountsManagment } from "../pages/Accounts";
+import { AuthorsManagment } from "../pages/Authors";
 
 
 export const AppRoutes = () => {
@@ -15,6 +16,7 @@ export const AppRoutes = () => {
         <Route element={<MainLayout />}>
           <Route path="/library" element={<LibraryMainPage/>}/>
           <Route path="/accounts" element={<AccountsManagment/>}/>
+          <Route path="/authors" element={<AuthorsManagment/>}/>
         </Route>
       </Route>
 

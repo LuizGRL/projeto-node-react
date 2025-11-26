@@ -22,7 +22,7 @@ export function NavBar() {
         name: "Gerenciar", 
         path: "#",
         subLinks: [
-          { name: "Livros", path: "/admin/books" },
+          { name: "Livros", path: "/books" },
           { name: "Autores", path: "/authors" },
           { name: "Editoras", path: "/publishers" },
           { name: "Usuários", path: "/accounts" }

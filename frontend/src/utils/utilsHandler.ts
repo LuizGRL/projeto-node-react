@@ -2,14 +2,38 @@ import { AxiosError } from 'axios';
 
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof AxiosError) {
-    if (error.response?.data?.message) {
-      if (Array.isArray(error.response.data.message)) {
-        return error.response.data.message[0];
+    const data = error.response?.data;
+
+    if (data) {
+
+      if (data.message?.errors?.fields) {
+        const fields = data.message.errors.fields;
+        
+        const fieldValues = Object.values(fields);
+
+        if (fieldValues.length > 0) {
+          const firstFieldErrorArray = fieldValues[0] as string[];
+          if (Array.isArray(firstFieldErrorArray) && firstFieldErrorArray.length > 0) {
+            return firstFieldErrorArray[0]; 
+          }
+        }
       }
-      return error.response.data.message;
+      if (typeof data.message?.message === 'string') {
+        return data.message.message;
+      }
+
+      if (typeof data.message === 'string') {
+        return data.message;
+      }
+
+      if (Array.isArray(data.message)) {
+        return data.message[0];
+      }
+
+      if (data.error) {
+        return data.error;
+      }
     }
-    
-    if (error.response?.data?.error) return error.response.data.error;
   }
 
   if (error instanceof Error) {

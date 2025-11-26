@@ -1,5 +1,5 @@
 import type { ZodUUID } from "zod";
-import type { IAccountResponseDTO, ICreateAccountDTO } from "../../types/accounts.dtos";
+import type { IAccountResponseDTO, ICreateAccountDTO } from "../../types/dtos/accounts.dtos";
 import { api } from "./api";
 
 export const userService = {

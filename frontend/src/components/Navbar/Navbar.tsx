@@ -24,7 +24,7 @@ export function NavBar() {
         subLinks: [
           { name: "Livros", path: "/admin/books" },
           { name: "Autores", path: "/authors" },
-          { name: "Editoras", path: "/admin/publishers" },
+          { name: "Editoras", path: "/publishers" },
           { name: "Usuários", path: "/accounts" }
         ]
       }

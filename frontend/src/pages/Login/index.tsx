@@ -20,7 +20,7 @@ export const LoginPage = () => {
     
     try {
       await signIn(email.toLowerCase(), password);
-      navigate("/dashboard");
+      navigate("/library");
       toast.success("Login realizado com sucesso!");
       setLoading(false);
     } catch (error) {

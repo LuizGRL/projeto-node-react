@@ -1,38 +1,31 @@
-import { useState } from "react";
 import type { IInputProps } from "../../../types/interfaces/IInputProps";
 import { InputWrapper } from "../styles";
 
-function AppDateInput({ label, required }: IInputProps) {
-    const [value, setValue] = useState("");
-    const [error, setError] = useState("");
+interface AppDateInputProps extends IInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+}
 
+function AppDateInput({ label, required, value, onChange, error }: AppDateInputProps) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const inputValue = e.target.value;
-        setValue(inputValue);
-        setError("");
-    };
-
-    const handleBlur = () => {
-        if (required && !value) {
-            setError("Data obrigatória.");
-        }
+        onChange(e.target.value); 
     };
 
     return (
         <InputWrapper>
-            <label>
+            <label className="block mb-1 font-semibold text-gray-700">
                 {label}
                 {required && <span className="text-red-500 ml-1">*</span>}
             </label>
             <input
-                className={`bg-amber-200 ${error ? "border border-red-500" : ""}`}
+                className={`bg-white border border-black rounded p-2 w-full ${error ? "border-red-500" : ""}`}
                 type="date"
                 value={value}
                 onChange={handleChange}
-                onBlur={handleBlur}
                 required={required}
             />
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
         </InputWrapper>
     );
 }

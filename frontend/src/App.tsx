@@ -4,24 +4,27 @@ import { AppRoutes } from './routes';
 import { ToastContainer } from 'react-toastify';
 import './App.css'; 
 import 'react-toastify/dist/ReactToastify.css'; 
+import { BreadcrumbProvider } from './context/BreadcrumbContext';
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
-        <ToastContainer 
-          position="top-right"
-          autoClose={3000} 
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
+          <BreadcrumbProvider> 
+          <AppRoutes />
+          <ToastContainer 
+            position="top-right"
+            autoClose={3000} 
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />  
+          </BreadcrumbProvider> 
       </AuthProvider>
     </BrowserRouter>
   );

@@ -9,8 +9,11 @@ import { Table } from "../../components/Table/Table";
 import AppModal from "../../components/Modal/AppModal";
 import { ConfirmModal } from "../../components/ConfirmModal/ConfirmModal";
 import type { ICreateAuthorDTO } from "../../types/dtos/authors.dtos";
+import { usePageTitle } from "../../context/BreadcrumbContext";
 
 export const AuthorsManagment = () => {
+  usePageTitle("Gerenciar Autores");
+
   const [users, setUsers] = useState<ICreateAuthorDTO[]>([]);
   
   const [isModalOpen, setIsModalOpen] = useState(false);

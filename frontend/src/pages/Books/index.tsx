@@ -11,6 +11,7 @@ import { getErrorMessage } from "../../utils/utilsHandler";
 import { authorService } from "../../services/auth/authorsService";
 import { publisherService } from "../../services/auth/publisherService";
 import { categoryService } from "../../services/category/categoryService";
+import { usePageTitle } from "../../context/BreadcrumbContext";
 
 interface IBookResponseDTO extends IBookCreateDTO {
   id?: string;
@@ -20,6 +21,7 @@ interface IBookResponseDTO extends IBookCreateDTO {
 }
 
 export const BooksManagement = () => {
+  usePageTitle("Gerenciar Livros");
   const [books, setBooks] = useState<IBookResponseDTO[]>([]);
   
   const [formOptions, setFormOptions] = useState({

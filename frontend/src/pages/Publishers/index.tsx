@@ -9,9 +9,12 @@ import { ConfirmModal } from "../../components/ConfirmModal/ConfirmModal";
 import { publisherService } from "../../services/auth/publisherService";
 import type { IPublisherResponseDTO } from "../../types/dtos/publisher.dto";
 import type { ZodUUID } from "zod";
+import { usePageTitle } from "../../context/BreadcrumbContext";
 
 
 export const PublishersManagement = () => {
+  usePageTitle("Gerenciar Editoras");
+
   const [publishers, setPublishers] = useState<IPublisherResponseDTO[]>([]);
   
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -9,8 +9,10 @@ import type { IAccountResponseDTO } from "../../types/dtos/accounts.dtos";
 import { createColumnHelper } from "@tanstack/react-table";
 import type { ZodUUID } from "zod";
 import { ConfirmModal } from "../../components/ConfirmModal/ConfirmModal";
+import { usePageTitle } from "../../context/BreadcrumbContext";
 
 export const AccountsManagment = () => {
+  usePageTitle("Gerenciar Contas");
   const [users, setUsers] = useState<IAccountResponseDTO[]>([]);
   
   const [isModalOpen, setIsModalOpen] = useState(false);

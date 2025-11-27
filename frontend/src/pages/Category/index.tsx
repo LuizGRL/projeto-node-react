@@ -8,8 +8,10 @@ import { ConfirmModal } from "../../components/ConfirmModal/ConfirmModal";
 import type { ICategoryCreateDTO } from "../../types/dtos/category.dto";
 import { categoryService } from "../../services/category/categoryService";
 import { CategoryForm } from "./CategoryForm";
+import { usePageTitle } from "../../context/BreadcrumbContext";
 
 export const CategoriesManagement = () => {
+  usePageTitle("Gerenciar Categorias");
   const [categories, setCategories] = useState<ICategoryCreateDTO[]>([]);
   
   const [isModalOpen, setIsModalOpen] = useState(false);

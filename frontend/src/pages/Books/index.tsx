@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react"; // 1. Importe useMemo
 import { BookForm } from "./BookForm"; 
 import AppModal from "../../components/Modal/AppModal";
 import { Table } from "../../components/Table/Table";
@@ -10,11 +10,13 @@ import { bookService } from "../../services/book/bookService";
 import { getErrorMessage } from "../../utils/utilsHandler";
 import { authorService } from "../../services/auth/authorsService";
 import { publisherService } from "../../services/auth/publisherService";
-
+import { categoryService } from "../../services/category/categoryService";
 
 interface IBookResponseDTO extends IBookCreateDTO {
+  id?: string;
   publisher?: { name: string };
-  authors?: { name: string }[];
+  authors?: { firstName: string; lastName: string }[]; 
+  categories?: { name: string }[]; 
 }
 
 export const BooksManagement = () => {
@@ -35,12 +37,27 @@ export const BooksManagement = () => {
 
   const columnHelper = createColumnHelper<IBookResponseDTO>();
 
-  const columns = [
+  const columns = useMemo(() => [
     columnHelper.accessor("title", {
       header: "Título",
     }),
     columnHelper.accessor("isbn", {
       header: "ISBN",
+    }),
+    columnHelper.accessor((row) => {
+      console.log(444)
+        if (!row.authors || row.authors.length === 0) return "N/A";
+        return row.authors.map(a => `${a.firstName} ${a.lastName}`).join(", ");
+    }, {
+      id: "authors",
+      header: "Autores",
+    }),
+    columnHelper.accessor((row) => {
+        if (!row.categories || row.categories.length === 0) return "N/A";
+        return row.categories.map(c => c.name).join(", ");
+    }, {
+      id: "categories", 
+      header: "Categorias",
     }),
     columnHelper.accessor((row) => row.publisher?.name || "N/A", {
       id: "publisher",
@@ -53,8 +70,7 @@ export const BooksManagement = () => {
     columnHelper.accessor("quantityTotal", {
       header: "Estoque",
     }),
-  ];
-
+  ], []);
   const fetchBooks = async () => {
     try {
       const data = await bookService.findAll(); 
@@ -151,6 +167,10 @@ export const BooksManagement = () => {
       <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Gerenciar Livros</h1>
           <p className="text-gray-500">Listagem completa do acervo de livros</p>
+          
+          <div className="text-xs text-gray-400 mt-2">
+            Total de livros carregados: {books.length}
+          </div>
       </div>
 
       <div>

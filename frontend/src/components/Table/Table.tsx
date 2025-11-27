@@ -9,7 +9,7 @@ import {
   type PaginationState,
   type SortingState,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import AppIconButton from "../Button/AppIconButton";
 import type { IDropdownOption } from "../../types/interfaces/IDropDownProps";
 import AppDropdown from "../Dropdown/AppDropdown";
@@ -17,10 +17,7 @@ import { ArrowUp, ArrowDown, Search, Plus } from "lucide-react";
 
 interface GenericTableProps<T extends { id: string }> {
   data: T[];
-  columns: {
-    accessorKey: keyof T;
-    header: string;
-  }[];
+  columns: ColumnDef<T, any>[]; 
   onEdit?: (item: T) => void;
   onDelete?: (id: string) => void;
   onAddClick?: () => void;
@@ -47,41 +44,42 @@ export function Table<T extends { id: string }>({
     { label: "50 por pág.", value: "50" },
   ];
 
-  const tableColumns: ColumnDef<T>[] = [
-    ...columns.map((col) => ({
-      accessorKey: col.accessorKey as string,
-      header: col.header,
-    })),
-    {
-      id: "actions",
-      header: "Ações",
-      headerClassName: "text-center", 
-      cell: ({ row }) => (
-        <div className="flex items-center justify-center gap-3"> 
-          {onEdit && (
-            <AppIconButton
-              onClick={() => onEdit(row.original)}
-              iconName="Pencil" 
-              className="text-blue-600 hover:bg-blue-50"
-              title="Editar"
-            />
-          )}
-          {onDelete && (
-            <AppIconButton
-              onClick={() => onDelete(row.original.id)}
-              iconName="Trash"
-              className="text-red-600 hover:bg-red-50" 
-              title="Excluir"
-            />
-          )}
-        </div>
-      ),
-    },
-  ];
+  const tableColumns = useMemo<ColumnDef<T>[]>(() => {
+    const baseColumns = [...columns];
+
+    if (onEdit || onDelete) {
+      baseColumns.push({
+        id: "actions",
+        header: "Ações",
+        cell: ({ row }) => (
+          <div className="flex items-center justify-center gap-3"> 
+            {onEdit && (
+              <AppIconButton
+                onClick={() => onEdit(row.original)}
+                iconName="Pencil" 
+                className="text-blue-600 hover:bg-blue-50"
+                title="Editar"
+              />
+            )}
+            {onDelete && (
+              <AppIconButton
+                onClick={() => onDelete(row.original.id)}
+                iconName="Trash"
+                className="text-red-600 hover:bg-red-50" 
+                title="Excluir"
+              />
+            )}
+          </div>
+        ),
+      });
+    }
+
+    return baseColumns;
+  }, [columns, onEdit, onDelete]);
 
   const table = useReactTable({
     data,
-    columns: tableColumns,
+    columns: tableColumns, 
     state: { sorting, pagination, globalFilter },
     onSortingChange: setSorting,
     onPaginationChange: setPagination,

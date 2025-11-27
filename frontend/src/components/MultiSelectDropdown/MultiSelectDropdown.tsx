@@ -17,16 +17,13 @@ const MultiSelectDropdown = ({ items, onSelectionChange, selectedIds = [] }) => 
     const isDifferent = 
        selectedIds.length !== currentIds.length || 
        !selectedIds.every(id => currentIds.includes(id));
-
     if (isDifferent) {
        setSelectedItems(items.filter(item => selectedIds.includes(item.id)));
     }
   }, [selectedIds, items]); 
 
   const filteredItems = items.filter(item => 
-    !selectedItems.some(selected => selected.id === item.id) &&
-    item.nome.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    !selectedItems.some(selected => selected.id === item.id)   );
 
   const handleSelect = (item) => {
     const newSelected = [...selectedItems, item];

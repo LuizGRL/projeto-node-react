@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AppButton from "../../components/Button/AppButton";
 import AppInput from "../../components/Input/AppInput/AppInput";
-import AppDateInput from "../../components/Input/AppDateInput/AppDateInput";
+import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 const isbnRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
 
@@ -19,9 +19,8 @@ const bookFormSchema = z.object({
   coverUrl: z.string().url("URL inválida").optional().or(z.literal('')),
   pages: z.coerce.number().int().positive("Deve ser positivo"),
   quantityTotal: z.coerce.number().int().nonnegative("Não pode ser negativo"),
-  // IDs de relacionamento
   publisherId: z.string().uuid("Selecione uma editora"),
-  authorIds: z.array(z.string()).min(1, "Selecione ao menos um autor"),
+  authorIds: z.array(z.string()).min(1, "Selecione ao menos um autor"), 
   categoryIds: z.array(z.string()).min(1, "Selecione ao menos uma categoria"),
 });
 
@@ -67,10 +66,13 @@ export function BookForm({
       pages: 0,
       quantityTotal: 0,
       publisherId: "",
-      authorIds: [],
+      authorIds: [], 
       categoryIds: [],
     }, 
   });
+
+  const authorsForDropdown = authors.map(a => ({ id: a.id, nome: a.name }));
+  const categoriesForDropdown = categories.map(c => ({ id: c.id, nome: c.name }));
 
   useEffect(() => {
     if (initialData) {
@@ -88,21 +90,12 @@ export function BookForm({
         pages: initialData.pages,
         quantityTotal: initialData.quantityTotal,
         publisherId: initialData.publisherId,
-        authorIds: Array.isArray(initialData.authorIds) ? initialData.authorIds : initialData.authors?.map((a: any) => a.id) || [],
-        categoryIds: Array.isArray(initialData.categoryIds) ? initialData.categoryIds : initialData.categories?.map((c: any) => c.id) || [],
-      });
-    } else {
-      reset({ 
-        id: "",
-        title: "",
-        isbn: "",
-        description: "",
-        coverUrl: "",
-        pages: 0,
-        quantityTotal: 0,
-        publisherId: "",
-        authorIds: [],
-        categoryIds: [],
+        authorIds: Array.isArray(initialData.authorIds) 
+          ? initialData.authorIds 
+          : initialData.authors?.map((a: any) => a.id) || [],
+        categoryIds: Array.isArray(initialData.categoryIds) 
+          ? initialData.categoryIds 
+          : initialData.categories?.map((c: any) => c.id) || [],
       });
     }
   }, [initialData, reset]);
@@ -122,8 +115,8 @@ export function BookForm({
   const selectClass = "w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white";
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      <h2 className="text-xl font-bold text-gray-800">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4 bg-white rounded shadow-sm">
+      <h2 className="text-xl font-bold text-gray-800 border-b pb-2">
         {initialData ? "Editar Livro" : "Novo Livro"}
       </h2>
 
@@ -234,94 +227,45 @@ export function BookForm({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Autores (Segure Ctrl para múltiplos)</label>
+        <div className="flex flex-col z-20"> {/* z-20 para o dropdown ficar acima */}
+          <label className="block text-sm font-medium text-gray-700 mb-1">Autores</label>
           <Controller
             name="authorIds"
             control={control}
             render={({ field }) => (
-              <select 
-                multiple 
-                className={`${selectClass} h-24`} 
-                value={field.value} 
-                onChange={(e) => {
-                  const options = Array.from(e.target.selectedOptions, option => option.value);
-                  field.onChange(options);
-                }}
-              >
-                {authors.map(author => (
-                  <option key={author.id} value={author.id}>{author.name}</option>
-                ))}
-              </select>
+              <MultiSelectDropdown
+                items={authorsForDropdown}
+                selectedIds={field.value} 
+                onSelectionChange={(ids) => field.onChange(ids)}
+              />
             )}
           />
           <ErrorMsg msg={errors.authorIds?.message} />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Categorias (Segure Ctrl para múltiplos)</label>
+        <div className="flex flex-col z-10">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Categorias</label>
           <Controller
             name="categoryIds"
             control={control}
             render={({ field }) => (
-              <select 
-                multiple 
-                className={`${selectClass} h-24`}
-                value={field.value}
-                onChange={(e) => {
-                  const options = Array.from(e.target.selectedOptions, option => option.value);
-                  field.onChange(options);
-                }}
-              >
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
+              <MultiSelectDropdown
+                items={categoriesForDropdown}
+                selectedIds={field.value}
+                onSelectionChange={(ids) => field.onChange(ids)}
+              />
             )}
           />
           <ErrorMsg msg={errors.categoryIds?.message} />
         </div>
       </div>
 
-      <div>
-        <Controller
-          name="coverUrl"
-          control={control}
-          render={({ field }) => (
-            <AppInput
-              label="URL da Capa (Imagem)"
-              placeholder="https://exemplo.com/capa.jpg"
-              value={field.value || ""} 
-              onChange={field.onChange} 
-            />
-          )}
-        />
-        <ErrorMsg msg={errors.coverUrl?.message} />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <textarea
-              className={`${selectClass} h-24 resize-none`}
-              placeholder="Sinopse do livro..."
-              value={field.value || ""}
-              onChange={field.onChange}
-            />
-          )}
-        />
-        <ErrorMsg msg={errors.description?.message} />
-      </div>
-
-      <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
+      <div className="flex justify-end gap-2 mt-6 border-t pt-4">
         <AppButton type="button" variant="secondary" onClick={onCancel}>
           Cancelar
         </AppButton>
-        <AppButton type="submit" variant="primary" loading={isSubmitting}>
-          {initialData ? "Salvar Alterações" : "Cadastrar Livro"}
+        <AppButton type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Salvando..." : "Salvar"}
         </AppButton>
       </div>
     </form>

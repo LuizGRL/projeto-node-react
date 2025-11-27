@@ -137,7 +137,6 @@ export function BookForm({
         {initialData ? "Editar Livro" : "Novo Livro"}
       </h2>
 
-      {/* Título e ISBN */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Controller

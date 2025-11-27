@@ -25,6 +25,7 @@ export function NavBar() {
           { name: "Livros", path: "/books" },
           { name: "Autores", path: "/authors" },
           { name: "Editoras", path: "/publishers" },
+          { name: "Categorias", path: "/categories" },
           { name: "Usuários", path: "/accounts" }
         ]
       }

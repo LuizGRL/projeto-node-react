@@ -7,6 +7,7 @@ import { AccountsManagment } from "../pages/Accounts";
 import { AuthorsManagment } from "../pages/Authors";
 import { PublishersManagement } from "../pages/Publishers";
 import { BooksManagement } from "../pages/Books";
+import { CategoriesManagement } from "../pages/Category";
 
 
 export const AppRoutes = () => {
@@ -21,6 +22,7 @@ export const AppRoutes = () => {
           <Route path="/authors" element={<AuthorsManagment/>}/>
           <Route path="/publishers" element={<PublishersManagement/>}/>
           <Route path="/books" element={<BooksManagement/>}/>
+          <Route path="/categories" element={<CategoriesManagement/>}/>
         </Route>
       </Route>
 
